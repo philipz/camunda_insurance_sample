@@ -1,0 +1,10 @@
+{
+	"messageName": "Message_InsuranceRequest",
+	"processVariables": {
+		"id": {"value": "123456789", "type": "String"},
+		"name": {"value": "philipz", "type": "String"},
+		"hasSocialSecurity": {"value": true, "type": "Boolean"},
+		"hasOtherInsurance": {"value": false, "type": "Boolean"},
+		"otherVariables": {"value": "omitted", "type": "String"}
+	}
+}

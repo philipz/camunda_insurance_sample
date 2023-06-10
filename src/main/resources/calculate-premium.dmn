@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" id="Definitions_0qckbye" name="DRD" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="calculate-premium" name="保費">
+    <decisionTable id="decisionTable_1">
+      <input id="input_1" label="Has social security?">
+        <inputExpression id="inputExpression_1" typeRef="boolean">
+          <text>hasSocialSecurity</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0p3uyo5" label="Has other insurance?">
+        <inputExpression id="LiteralExpression_0wu3t5n" typeRef="boolean">
+          <text>hasOtherInsurance</text>
+        </inputExpression>
+      </input>
+      <output id="output_1" label="premium" name="Premium" typeRef="long" />
+      <rule id="DecisionRule_1rt4aw2">
+        <inputEntry id="UnaryTests_0vtje2u">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_00b2bd5">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0jbth52">
+          <text>600</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_15uzhqx">
+        <inputEntry id="UnaryTests_0utxf07">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0rg9gsg">
+          <text>false</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1q33i7b">
+          <text>1000</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1oyuybk">
+        <inputEntry id="UnaryTests_016rpoj">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0gi7c5t">
+          <text>true</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1yjvahe">
+          <text>1200</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0prmizb">
+        <inputEntry id="UnaryTests_1yachiu">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1bxaj9j">
+          <text>false</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_10c8iru">
+          <text>2000</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

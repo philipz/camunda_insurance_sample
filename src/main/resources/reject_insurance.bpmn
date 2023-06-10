@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0b7aef1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.11.0">
+  <bpmn:process id="rejectInsurance" name="拒保流程" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_RejectInsurance">
+      <bpmn:outgoing>SequenceFlow_1w41waz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="ScriptTask_SendRejectMessage" name="發送拒保通知" scriptFormat="javascript">
+      <bpmn:incoming>SequenceFlow_1c5xf8w</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ku78uw</bpmn:outgoing>
+      <bpmn:script>print('Ready to reject insurance request')
+
+message = execution.getVariable("declineMessage")
+
+print('Reject message:', message)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="ServiceTask_PrepareRejectMessage" name="準備拒保通知" camunda:delegateExpression="#{declineMessageProvider}">
+      <bpmn:incoming>SequenceFlow_1w41waz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1c5xf8w</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1c5xf8w" sourceRef="ServiceTask_PrepareRejectMessage" targetRef="ScriptTask_SendRejectMessage" />
+    <bpmn:sequenceFlow id="SequenceFlow_1w41waz" sourceRef="StartEvent_RejectInsurance" targetRef="ServiceTask_PrepareRejectMessage" />
+    <bpmn:endEvent id="EndEvent_InsuranceRejected">
+      <bpmn:incoming>SequenceFlow_1ku78uw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1ku78uw" sourceRef="ScriptTask_SendRejectMessage" targetRef="EndEvent_InsuranceRejected" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="rejectInsurance">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_RejectInsurance">
+        <dc:Bounds x="156" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0kxyg56_di" bpmnElement="ScriptTask_SendRejectMessage">
+        <dc:Bounds x="432" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1xhzkgz_di" bpmnElement="ServiceTask_PrepareRejectMessage">
+        <dc:Bounds x="261" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0tsb84h_di" bpmnElement="EndEvent_InsuranceRejected">
+        <dc:Bounds x="603" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c5xf8w_di" bpmnElement="SequenceFlow_1c5xf8w">
+        <di:waypoint x="361" y="100" />
+        <di:waypoint x="432" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1w41waz_di" bpmnElement="SequenceFlow_1w41waz">
+        <di:waypoint x="192" y="100" />
+        <di:waypoint x="261" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ku78uw_di" bpmnElement="SequenceFlow_1ku78uw">
+        <di:waypoint x="532" y="100" />
+        <di:waypoint x="603" y="100" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

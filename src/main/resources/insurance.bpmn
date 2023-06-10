@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1xe4yp5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.11.0">
+  <bpmn:collaboration id="Collaboration_Insurance">
+    <bpmn:participant id="Participant_InsuranceCompany" name="保險公司" processRef="insurance" />
+    <bpmn:participant id="Participant_Applicant" name="保險申請人" />
+    <bpmn:messageFlow id="MessageFlow_1tr0303" sourceRef="Participant_Applicant" targetRef="StartEvent_BuyInsuranceRequest" />
+    <bpmn:messageFlow id="MessageFlow_197jbh5" sourceRef="Participant_Applicant" targetRef="IntermediateThrowEvent_ReceiveInsuranceContract" />
+    <bpmn:messageFlow id="MessageFlow_0goyzr8" sourceRef="Task_SendMessage" targetRef="Participant_Applicant" />
+    <bpmn:messageFlow id="MessageFlow_0ry4l89" sourceRef="Task_SendInsurance" targetRef="Participant_Applicant" />
+  </bpmn:collaboration>
+  <bpmn:process id="insurance" name="投保流程" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_0piz1si">
+      <bpmn:lane id="Lane_Advisor" name="保險業務">
+        <bpmn:flowNodeRef>StartEvent_BuyInsuranceRequest</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_IntegrityCheck</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_Integrity</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_SendMessage</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_QualificationCheck</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_Qualification</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_DeclineInsurance</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_InsuranceRejected_NotQualify</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_NeedMoreDocument</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CalculateInsurancePremium</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CreateInsuranceContract</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_SendInsurance</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IntermediateThrowEvent_ReceiveInsuranceContract</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_InsuranceConfirmed</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Manager" name="保險經理">
+        <bpmn:flowNodeRef>Task_CheckInsuranceCase</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_Risk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_DeclineInsurance_Risky</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_InsuranceRejected_Risky</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="StartEvent_BuyInsuranceRequest" name="收到投保申請">
+      <bpmn:outgoing>SequenceFlow_0d0i1go</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_1i96txl" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_IntegrityCheck" name="檢查資料完整性" camunda:delegateExpression="#{integrityChecker}">
+      <bpmn:incoming>SequenceFlow_0d0i1go</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1lm33d7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_Integrity" name="完整？">
+      <bpmn:incoming>SequenceFlow_1lm33d7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0pluiqg</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_IsComplete</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="Task_SendMessage" name="發送補齊資料通知" scriptFormat="javascript">
+      <bpmn:incoming>SequenceFlow_IsComplete</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0pvg9nz</bpmn:outgoing>
+      <bpmn:script>print('已發送必要文件補齊訊息。')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Task_QualificationCheck" name="檢查保險資格" camunda:delegateExpression="#{ qualificationChecker}">
+      <bpmn:incoming>SequenceFlow_0pluiqg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_09peiic</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_Qualification" name="合格？">
+      <bpmn:incoming>SequenceFlow_09peiic</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_Quafilied</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_NotQualified</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_ManualCheck</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:callActivity id="Task_DeclineInsurance" name="拒保" calledElement="rejectInsurance">
+      <bpmn:incoming>SequenceFlow_NotQualified</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0pykjx3</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="EndEvent_InsuranceRejected_NotQualify" name="拒保">
+      <bpmn:incoming>SequenceFlow_0pykjx3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_NeedMoreDocument" name="结束">
+      <bpmn:incoming>SequenceFlow_0pvg9nz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Task_CheckInsuranceCase" name="審查案件" camunda:assignee="manager">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="isRiskManagable" label=" 是否風險可控？" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_ManualCheck</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0zvbug6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_Risk" name="風險可控？">
+      <bpmn:incoming>SequenceFlow_0zvbug6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_RiskManagable</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_RiskNotManagable</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:businessRuleTask id="Task_CalculateInsurancePremium" name="計算保額" camunda:resultVariable="premium" camunda:decisionRef="calculate-premium" camunda:mapDecisionResult="singleEntry">
+      <bpmn:incoming>SequenceFlow_Quafilied</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_RiskManagable</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02zr8xs</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:callActivity id="Task_DeclineInsurance_Risky" name="拒保" calledElement="rejectInsurance">
+      <bpmn:incoming>SequenceFlow_RiskNotManagable</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_168kwxr</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="EndEvent_InsuranceRejected_Risky" name="拒保">
+      <bpmn:incoming>SequenceFlow_168kwxr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Task_CreateInsuranceContract" name="建立保單" camunda:delegateExpression="#{insuranceContractProvider}">
+      <bpmn:incoming>SequenceFlow_02zr8xs</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02vjc8o</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Task_SendInsurance" name="發送保單" scriptFormat="javascript">
+      <bpmn:incoming>SequenceFlow_02vjc8o</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_11r8szi</bpmn:outgoing>
+      <bpmn:script>print('Ready to send contract to user')
+
+message = execution.getVariable("contractMessage")
+
+print('Contract message:', message)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_ReceiveInsuranceContract" name="確認簽收保單">
+      <bpmn:incoming>SequenceFlow_11r8szi</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jju50a</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0sj946w" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="EndEvent_InsuranceConfirmed" name="完成">
+      <bpmn:incoming>SequenceFlow_0jju50a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0d0i1go" sourceRef="StartEvent_BuyInsuranceRequest" targetRef="Task_IntegrityCheck" />
+    <bpmn:sequenceFlow id="SequenceFlow_1lm33d7" sourceRef="Task_IntegrityCheck" targetRef="ExclusiveGateway_Integrity" />
+    <bpmn:sequenceFlow id="SequenceFlow_IsComplete" name="No" sourceRef="ExclusiveGateway_Integrity" targetRef="Task_SendMessage">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!isDocumentComplete}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0pluiqg" name="Yes" sourceRef="ExclusiveGateway_Integrity" targetRef="Task_QualificationCheck">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isDocumentComplete}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0pvg9nz" sourceRef="Task_SendMessage" targetRef="EndEvent_NeedMoreDocument" />
+    <bpmn:sequenceFlow id="SequenceFlow_09peiic" sourceRef="Task_QualificationCheck" targetRef="ExclusiveGateway_Qualification" />
+    <bpmn:sequenceFlow id="SequenceFlow_ManualCheck" name="需要人工審查" sourceRef="ExclusiveGateway_Qualification" targetRef="Task_CheckInsuranceCase">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isQualified == 'other'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_NotQualified" name="No" sourceRef="ExclusiveGateway_Qualification" targetRef="Task_DeclineInsurance">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isQualified == 'no'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_Quafilied" name="Yes" sourceRef="ExclusiveGateway_Qualification" targetRef="Task_CalculateInsurancePremium">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isQualified == 'yes'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0pykjx3" sourceRef="Task_DeclineInsurance" targetRef="EndEvent_InsuranceRejected_NotQualify" />
+    <bpmn:sequenceFlow id="SequenceFlow_0zvbug6" sourceRef="Task_CheckInsuranceCase" targetRef="ExclusiveGateway_Risk" />
+    <bpmn:sequenceFlow id="SequenceFlow_RiskNotManagable" name="No" sourceRef="ExclusiveGateway_Risk" targetRef="Task_DeclineInsurance_Risky">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!isRiskManagable}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_RiskManagable" name="Yes" sourceRef="ExclusiveGateway_Risk" targetRef="Task_CalculateInsurancePremium">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isRiskManagable}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_02zr8xs" sourceRef="Task_CalculateInsurancePremium" targetRef="Task_CreateInsuranceContract" />
+    <bpmn:sequenceFlow id="SequenceFlow_168kwxr" sourceRef="Task_DeclineInsurance_Risky" targetRef="EndEvent_InsuranceRejected_Risky" />
+    <bpmn:sequenceFlow id="SequenceFlow_02vjc8o" sourceRef="Task_CreateInsuranceContract" targetRef="Task_SendInsurance" />
+    <bpmn:sequenceFlow id="SequenceFlow_11r8szi" sourceRef="Task_SendInsurance" targetRef="IntermediateThrowEvent_ReceiveInsuranceContract" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jju50a" sourceRef="IntermediateThrowEvent_ReceiveInsuranceContract" targetRef="EndEvent_InsuranceConfirmed" />
+  </bpmn:process>
+  <bpmn:message id="Message_1i96txl" name="Message_InsuranceRequest" />
+  <bpmn:message id="Message_0sj946w" name="Message_ReceiveInsuranceContract" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_Insurance">
+      <bpmndi:BPMNShape id="Participant_1txqfzx_di" bpmnElement="Participant_InsuranceCompany" isHorizontal="true">
+        <dc:Bounds x="153" y="203" width="1189" height="390" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0cnvy07_di" bpmnElement="Lane_Manager" isHorizontal="true">
+        <dc:Bounds x="183" y="447" width="1159" height="146" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_15a6jxp_di" bpmnElement="Lane_Advisor" isHorizontal="true">
+        <dc:Bounds x="183" y="203" width="1159" height="244" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1upfw03_di" bpmnElement="StartEvent_BuyInsuranceRequest">
+        <dc:Bounds x="218" y="359" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="208" y="402" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0mg4a45_di" bpmnElement="Task_IntegrityCheck">
+        <dc:Bounds x="289" y="337" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_117i44b_di" bpmnElement="ExclusiveGateway_Integrity" isMarkerVisible="true">
+        <dc:Bounds x="422" y="352" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="431" y="412" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0v7my7b_di" bpmnElement="Task_SendMessage">
+        <dc:Bounds x="397" y="223" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1oe0jvl_di" bpmnElement="Task_QualificationCheck">
+        <dc:Bounds x="508" y="337" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0fg6gi7_di" bpmnElement="ExclusiveGateway_Qualification" isMarkerVisible="true">
+        <dc:Bounds x="638" y="352" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="623" y="350" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0e18wuz_di" bpmnElement="Task_DeclineInsurance">
+        <dc:Bounds x="613" y="223" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0t9kvld_di" bpmnElement="EndEvent_InsuranceRejected_NotQualify">
+        <dc:Bounds x="751" y="245" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="758" y="288" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_152ojfs_di" bpmnElement="EndEvent_NeedMoreDocument">
+        <dc:Bounds x="540" y="245" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="547" y="288" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_12kohem_di" bpmnElement="Task_CheckInsuranceCase">
+        <dc:Bounds x="703" y="484" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0g3je5x_di" bpmnElement="ExclusiveGateway_Risk" isMarkerVisible="true">
+        <dc:Bounds x="836" y="499" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="837" y="559" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BusinessRuleTask_1g3nbeh_di" bpmnElement="Task_CalculateInsurancePremium">
+        <dc:Bounds x="811" y="337" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1x9ob5m_di" bpmnElement="Task_DeclineInsurance_Risky">
+        <dc:Bounds x="928" y="484" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0qpfk7l_di" bpmnElement="EndEvent_InsuranceRejected_Risky">
+        <dc:Bounds x="1065" y="506" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1074" y="549" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1cwl4f1_di" bpmnElement="Task_CreateInsuranceContract">
+        <dc:Bounds x="951" y="337" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0cbqb56_di" bpmnElement="Task_SendInsurance">
+        <dc:Bounds x="1088" y="337" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0dxdue9_di" bpmnElement="IntermediateThrowEvent_ReceiveInsuranceContract">
+        <dc:Bounds x="1219" y="359" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1210" y="402" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1oypvct_di" bpmnElement="EndEvent_InsuranceConfirmed">
+        <dc:Bounds x="1286" y="359" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1294" y="402" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0d0i1go_di" bpmnElement="SequenceFlow_0d0i1go">
+        <di:waypoint x="254" y="377" />
+        <di:waypoint x="289" y="377" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lm33d7_di" bpmnElement="SequenceFlow_1lm33d7">
+        <di:waypoint x="389" y="377" />
+        <di:waypoint x="422" y="377" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ppvg9b_di" bpmnElement="SequenceFlow_IsComplete">
+        <di:waypoint x="447" y="352" />
+        <di:waypoint x="447" y="303" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="455" y="335" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pluiqg_di" bpmnElement="SequenceFlow_0pluiqg">
+        <di:waypoint x="472" y="377" />
+        <di:waypoint x="508" y="377" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="481" y="359" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pvg9nz_di" bpmnElement="SequenceFlow_0pvg9nz">
+        <di:waypoint x="497" y="263" />
+        <di:waypoint x="540" y="263" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_09peiic_di" bpmnElement="SequenceFlow_09peiic">
+        <di:waypoint x="608" y="377" />
+        <di:waypoint x="638" y="377" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1kt46bi_di" bpmnElement="SequenceFlow_ManualCheck">
+        <di:waypoint x="663" y="402" />
+        <di:waypoint x="663" y="524" />
+        <di:waypoint x="703" y="524" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="466" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_13svm06_di" bpmnElement="SequenceFlow_NotQualified">
+        <di:waypoint x="663" y="352" />
+        <di:waypoint x="663" y="303" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="678" y="318" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_039m4yl_di" bpmnElement="SequenceFlow_Quafilied">
+        <di:waypoint x="688" y="377" />
+        <di:waypoint x="811" y="377" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="741" y="359" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pykjx3_di" bpmnElement="SequenceFlow_0pykjx3">
+        <di:waypoint x="713" y="263" />
+        <di:waypoint x="751" y="263" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zvbug6_di" bpmnElement="SequenceFlow_0zvbug6">
+        <di:waypoint x="803" y="524" />
+        <di:waypoint x="836" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qed7c6_di" bpmnElement="SequenceFlow_RiskNotManagable">
+        <di:waypoint x="886" y="524" />
+        <di:waypoint x="928" y="524" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="896" y="504" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ipf321_di" bpmnElement="SequenceFlow_RiskManagable">
+        <di:waypoint x="861" y="499" />
+        <di:waypoint x="861" y="417" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="870" y="462" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_02zr8xs_di" bpmnElement="SequenceFlow_02zr8xs">
+        <di:waypoint x="911" y="377" />
+        <di:waypoint x="951" y="377" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_168kwxr_di" bpmnElement="SequenceFlow_168kwxr">
+        <di:waypoint x="1028" y="524" />
+        <di:waypoint x="1065" y="524" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_02vjc8o_di" bpmnElement="SequenceFlow_02vjc8o">
+        <di:waypoint x="1051" y="377" />
+        <di:waypoint x="1088" y="377" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11r8szi_di" bpmnElement="SequenceFlow_11r8szi">
+        <di:waypoint x="1188" y="377" />
+        <di:waypoint x="1219" y="377" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jju50a_di" bpmnElement="SequenceFlow_0jju50a">
+        <di:waypoint x="1255" y="377" />
+        <di:waypoint x="1286" y="377" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_1anzc6g_di" bpmnElement="Participant_Applicant" isHorizontal="true">
+        <dc:Bounds x="152" y="86" width="1190" height="88" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_1tr0303_di" bpmnElement="MessageFlow_1tr0303">
+        <di:waypoint x="236" y="174" />
+        <di:waypoint x="236" y="359" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_197jbh5_di" bpmnElement="MessageFlow_197jbh5">
+        <di:waypoint x="1237" y="174" />
+        <di:waypoint x="1237" y="359" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_0goyzr8_di" bpmnElement="MessageFlow_0goyzr8">
+        <di:waypoint x="447" y="223" />
+        <di:waypoint x="447" y="174" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="MessageFlow_0ry4l89_di" bpmnElement="MessageFlow_0ry4l89">
+        <di:waypoint x="1138" y="337" />
+        <di:waypoint x="1138" y="174" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
