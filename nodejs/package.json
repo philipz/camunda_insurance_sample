@@ -1,0 +1,14 @@
+{
+  "name": "insurance",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "type": "module",
+  "author": "Philipz",
+  "license": "MIT",
+  "dependencies": {
+    "camunda-external-task-client-js": "3.0.0"
+  }
+}
