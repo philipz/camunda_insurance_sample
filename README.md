@@ -14,7 +14,7 @@ Camunda Platform Run and External Tasks.
 
 ## Initialization
 
-1. Run Camunda-Run `docker run -d --name camunda -p 8080:8080 camunda/camunda-bpm-platform:run-7.19.0`
+1. Run Camunda-Run `docker run -d --name camunda -p 8080:8080 camunda/camunda-bpm-platform:run-7.19.0` or `docker run -d --name camunda -p 8080:8080 asia-east1-docker.pkg.dev/dasea-lab/camunda/camunda_insurance_sample:run-7.19.0`
 2. Deploy BPMNs and DMN file by Camunda Modeler.
 
 ## Running those Applications
