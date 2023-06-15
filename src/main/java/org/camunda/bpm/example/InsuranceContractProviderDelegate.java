@@ -22,7 +22,7 @@ public class InsuranceContractProviderDelegate implements JavaDelegate {
     }
 
     private String prepareInsuranceContract(Long premium) {
-        //TODO: 准备保单
+        //TODO: 準備保單
         return "恭喜！核保通過，保費為每年：" + premium + "。";
     }
 }
