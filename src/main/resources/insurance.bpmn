@@ -41,7 +41,7 @@
       <bpmn:incoming>SequenceFlow_0d0i1go</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1lm33d7</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_Integrity" name="完整？">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_Integrity" name="資料是否完整？">
       <bpmn:incoming>SequenceFlow_1lm33d7</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0pluiqg</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_IsComplete</bpmn:outgoing>
@@ -85,7 +85,7 @@
       <bpmn:outgoing>SequenceFlow_RiskManagable</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_RiskNotManagable</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:businessRuleTask id="Task_CalculateInsurancePremium" name="計算保額" camunda:resultVariable="premium" camunda:decisionRef="calculate-premium" camunda:mapDecisionResult="singleEntry">
+    <bpmn:businessRuleTask id="Task_CalculateInsurancePremium" name="計算保費" camunda:resultVariable="premium" camunda:decisionRef="calculate-premium" camunda:mapDecisionResult="singleEntry">
       <bpmn:incoming>SequenceFlow_Quafilied</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_RiskManagable</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_02zr8xs</bpmn:outgoing>
@@ -180,7 +180,7 @@ print('Contract message:', message)</bpmn:script>
       <bpmndi:BPMNShape id="ExclusiveGateway_117i44b_di" bpmnElement="ExclusiveGateway_Integrity" isMarkerVisible="true">
         <dc:Bounds x="422" y="352" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="431" y="412" width="33" height="14" />
+          <dc:Bounds x="409" y="412" width="77" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_0v7my7b_di" bpmnElement="Task_SendMessage">
