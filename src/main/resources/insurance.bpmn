@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1xe4yp5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.11.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1xe4yp5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.16.0">
   <bpmn:collaboration id="Collaboration_Insurance">
     <bpmn:participant id="Participant_InsuranceCompany" name="保險公司" processRef="insurance" />
     <bpmn:participant id="Participant_Applicant" name="保險申請人" />
@@ -8,7 +8,7 @@
     <bpmn:messageFlow id="MessageFlow_0goyzr8" sourceRef="Task_SendMessage" targetRef="Participant_Applicant" />
     <bpmn:messageFlow id="MessageFlow_0ry4l89" sourceRef="Task_SendInsurance" targetRef="Participant_Applicant" />
   </bpmn:collaboration>
-  <bpmn:process id="insurance" name="投保流程" isExecutable="true">
+  <bpmn:process id="insurance" name="投保流程" isExecutable="true" camunda:historyTimeToLive="365">
     <bpmn:laneSet id="LaneSet_0piz1si">
       <bpmn:lane id="Lane_Advisor" name="保險業務">
         <bpmn:flowNodeRef>StartEvent_BuyInsuranceRequest</bpmn:flowNodeRef>

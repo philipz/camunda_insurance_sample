@@ -2,6 +2,7 @@ package org.camunda.bpm.example;
 
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.community.process_test_coverage.spring_test.platform7.ProcessEngineCoverageConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertT
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@Import(CoverageTestConfiguration.class)
+@Import({CoverageTestConfiguration.class, ProcessEngineCoverageConfiguration.class})
 public class rejectinsuranceTest {
 
         private static final String PROCESS_DEFINITION_KEY = "rejectInsurance";

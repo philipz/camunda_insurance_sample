@@ -4,6 +4,7 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.Variables;
+import org.camunda.community.process_test_coverage.spring_test.platform7.ProcessEngineCoverageConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@Import(CoverageTestConfiguration.class)
+@Import({CoverageTestConfiguration.class, ProcessEngineCoverageConfiguration.class})
 public class insuranceTest {
 
         private static final String PROCESS_DEFINITION_KEY = "insurance";
