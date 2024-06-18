@@ -98,6 +98,20 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
+    <dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+			<version>23.0.4
+      </version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js</artifactId>
+			<version>23.0.4
+      </version>
+		</dependency>
+
   </dependencies>
 
   <build>
