@@ -11,22 +11,13 @@
   <packaging>jar</packaging>
 
   <properties>
-    <camunda.platform.version>7.18.0</camunda.platform.version>
-    <spring.boot.version>2.7.3</spring.boot.version>
-    <graaljs.version>21.1.0</graaljs.version>
-    <java.version>11</java.version>
+    <camunda.platform.version>7.20.4</camunda.platform.version>
+    <spring.boot.version>3.2.4</spring.boot.version>
+    <java.version>17</java.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.camunda.bpm</groupId>
-        <artifactId>camunda-bom</artifactId>
-        <version>${camunda.platform.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -39,28 +30,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-external-task-client</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.camunda.bpm</groupId>
-      <artifactId>camunda-engine-plugin-spin</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.camunda.spin</groupId>
-      <artifactId>camunda-spin-dataformat-all</artifactId>
+      <groupId>org.camunda.community</groupId>
+      <artifactId>camunda-engine-rest-client-complete-springboot-starter</artifactId>
+      <version>${camunda.platform.version}</version>
     </dependency>
 
     <dependency>
@@ -73,17 +45,6 @@
       <artifactId>h2</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.graalvm.js</groupId>
-      <artifactId>js</artifactId>
-      <version>${graaljs.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.graalvm.js</groupId>
-      <artifactId>js-scriptengine</artifactId>
-      <version>${graaljs.version}</version>
-    </dependency>
   </dependencies>
 
 <build>
