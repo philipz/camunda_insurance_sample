@@ -101,40 +101,55 @@
     <dependency>
 			<groupId>org.graalvm.js</groupId>
 			<artifactId>js-scriptengine</artifactId>
-			<version>23.0.4
-      </version>
+			<version>23.0.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.graalvm.js</groupId>
 			<artifactId>js</artifactId>
-			<version>23.0.4
-      </version>
+			<version>23.0.4</version>
 		</dependency>
 
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${springboot.version}</version>
-        <configuration>
-          <mainClass>${start.class}</mainClass>
-          <layout>ZIP</layout>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+        <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+        </plugin>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <mainClass>${start.class}</mainClass>
+              <layout>ZIP</layout>
+                <image>
+                    <buildpacks>
+                        <buildpack>paketo-buildpacks/java</buildpack>
+                        <buildpack>paketobuildpacks/opentelemetry</buildpack>
+                    </buildpacks>
+                    <builder>dashaun/builder:tiny</builder> <!-- paketo images do not support ARM -->
+                    <env>
+                        <BP_OPENTELEMETRY_ENABLED>true</BP_OPENTELEMETRY_ENABLED>
+                        <BP_NATIVE_IMAGE>false</BP_NATIVE_IMAGE>
+                        <BPL_JAVA_NMT_ENABLED>false</BPL_JAVA_NMT_ENABLED>
+                        <BP_SPRING_CLOUD_BINDINGS_DISABLED>true</BP_SPRING_CLOUD_BINDINGS_DISABLED>
+                        <BP_SPRING_AOT_ENABLED>true</BP_SPRING_AOT_ENABLED>
+                        <BP_JVM_CDS_ENABLED>true</BP_JVM_CDS_ENABLED>
+                    </env>
+                </image>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>repackage</goal>
+                </goals>
+              </execution>
+            </executions>
+        </plugin>
     </plugins>
   </build>
-
 <repositories>
     <repository>
       <!-- Required for camunda-bpm-run-modules-swaggerui and camunda-process-test-coverage -->
