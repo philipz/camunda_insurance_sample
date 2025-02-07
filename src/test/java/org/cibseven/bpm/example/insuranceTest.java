@@ -1,9 +1,9 @@
-package org.camunda.bpm.example;
+package org.cibseven.bpm.example;
 
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.runtime.Execution;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.variable.Variables;
+import org.cibseven.bpm.engine.RuntimeService;
+import org.cibseven.bpm.engine.runtime.Execution;
+import org.cibseven.bpm.engine.runtime.ProcessInstance;
+import org.cibseven.bpm.engine.variable.Variables;
 import org.camunda.community.process_test_coverage.spring_test.platform7.ProcessEngineCoverageConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,10 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.complete;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.task;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.withVariables;
+import static org.cibseven.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertThat;
+import static org.cibseven.bpm.engine.test.assertions.bpmn.BpmnAwareTests.complete;
+import static org.cibseven.bpm.engine.test.assertions.bpmn.BpmnAwareTests.task;
+import static org.cibseven.bpm.engine.test.assertions.bpmn.BpmnAwareTests.withVariables;
 import java.util.Map;
 
 @SpringBootTest

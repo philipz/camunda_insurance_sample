@@ -1,4 +1,4 @@
-package org.camunda.bpm.example;
+package org.cibseven.bpm.example;
 
 import org.camunda.community.process_test_coverage.spring_test.platform7.ProcessEngineCoverageProperties;
 import org.springframework.boot.test.context.TestConfiguration;
