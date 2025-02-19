@@ -87,10 +87,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.camunda.community.process_test_coverage</groupId>
-      <artifactId>camunda-process-test-coverage-starter-platform-7</artifactId>
-      <version>${camunda-process-test-coverage.version}</version>
-      <scope>test</scope>
+        <groupId>org.cibseven.community.process_test_coverage</groupId>
+        <artifactId>cibseven-process-test-coverage-starter-platform-7</artifactId>
+        <version>1.0.0</version>
+        <scope>test</scope>
     </dependency>
 
     <dependency>

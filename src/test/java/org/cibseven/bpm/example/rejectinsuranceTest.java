@@ -2,7 +2,7 @@ package org.cibseven.bpm.example;
 
 import org.cibseven.bpm.engine.RuntimeService;
 import org.cibseven.bpm.engine.runtime.ProcessInstance;
-import org.camunda.community.process_test_coverage.spring_test.platform7.ProcessEngineCoverageConfiguration;
+import org.cibseven.community.process_test_coverage.spring_test.platform7.ProcessEngineCoverageConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
